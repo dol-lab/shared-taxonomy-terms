@@ -53,9 +53,8 @@ function shared_taxonomy_terms() {
 
 }
 
-
 function demo_shared_taxonomies() {
-		/*
+	/*
 	$this->shared_taxonomy_slugs = $shared_taxonomy_slugs;
 	$this->shared_taxonomy_slugs = get_option( $this->shared_term_option_name, $this->shared_taxonomy_slugs ); */
 
@@ -73,6 +72,5 @@ function demo_shared_taxonomies() {
 
 	$manager = new Shared_Taxonomies\Shared_Taxonomy_Manager();
 	$manager->add( $relation );
-
 
 }

@@ -6,18 +6,11 @@ Allows you to "share" or "synchronize" terms and term-relations between differen
 When you create a taxonomy with ``register_taxonomy`` you can assign ``(meta-)capabilities``. If you want to ``manage_terms`` you need to be able to ``publish_posts``.
 When you create a shared relation these ``capabilites`` become ``actions`` which can be synced. The default ones are: ``manage_terms`` ( 💖 when you create a term ), ``edit_terms`` ( 💘 when you update an existing term ), ``delete_terms`` ( 💔 when you delete a term) and ``assign_terms`` (💞 when you assign an ``object_id`` like a post or user to a ``term_taxonomy_id`` ). _Sorry for the hearts, do you have better emojis?_
 
-It does two basic things:
-1. (One/two way) Sync **terms** of different taxonomies.
+## What does this plugin do?
+(One/two way) Sync **terms** of different taxonomies.
    1. Example one way: You have two taxonomies: `animals` and `pets`. Now you set up: `pets`->💖💘💔->`animals`. Whenever you add a pet (like "dog") it is also added to animals (we assume: "every pet is an animal").
    2. Example two way: You have users in different teams. You create taxonomies: ``User-Team`` (to assign users to teams) and ``Post-Team`` (to assign posts to teams). ``UT``|``PT``->💖💘💔->``UT``|``PT``. Whenever you create/edit/delete a team now (either in the tax ``PT`` or ``UT``), the same change also applies to the other. _(The extra mile) Write a filter: When a user in a shared taxonomy writes a post, the users's term is also assigned to the post. Only show posts, where users have the shared taxonomy and you have (nested) subgroups!_
-2. (One/two way) Sync **term-relations** of different taxonomies. (‼ This is work in progress!)  
-   Example: You have a big organisation where users are assigned to nested user-affiliations (which are taxonomies). You have three shared taxonomies:
-	 - ``AAR`` Automatically added roles (by your identity management)
-	 - ``UAR`` User-added roles (by the user herself)
-	 - ``MR`` Merged roles.  
-  
-	You setup the relation ``AAR``|``UAR``->💖💘💔💞->``MR``  
-	Let the user write to ``UAR`` and read from ``MR``. This way all affiliations are preserved (and can also be removed), when changes in ``AAR`` or ``UAR`` occur.
+
 
 
 ## Careful
@@ -28,9 +21,19 @@ It does two basic things:
 - When you create a relation A[1,2,3]->B[1,2,4] and delete 1 from A it is also deleted in B. 4 will still exist in B.
 
 ## Todo
-- Sync term_relations for shared terms
+
 - Add a backend interface to add relations (it's currently only a class)
 - Write some tests, there is lots of edge-cases...
+- Hm, I guess we don't do this: (One/two way) Sync **term-relations** of different taxonomies. (‼ This is work in progress!)  
+   Example: You have a big organisation where users are assigned to nested user-affiliations (which are taxonomies). You have three shared taxonomies:
+	 - ``AAR`` Automatically added roles (by your identity management)
+	 - ``UAR`` User-added roles (by the user herself)
+	 - ``MR`` Merged roles.  
+  
+	You setup the relation ``AAR``|``UAR``->💖💘💔💞->``MR``  
+	Let the user write to ``UAR`` and read from ``MR``. This way all affiliations are preserved (and can also be removed), when changes in ``AAR`` or ``UAR`` occur.
+
+
 
 ## Maybe
 - Sharing Taxonomies across multiple blogs.
