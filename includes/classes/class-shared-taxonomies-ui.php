@@ -108,12 +108,10 @@ class Shared_Taxonomies_Ui {
 	}
 
 	public function warn_non_existing_taxonomies() {
-
 		foreach ( $this->parent->sources as $tax_name ) {
 			if ( ! $this->parent->taxononomy_slugs_exist( $tax_name ) ) {
-				$this->admin_notice->add(
+				$this->admin_notice->add_error(
 					"The taxonomy <code>$tax_name</code> is not defined, but specified as a 'shared taxonomy'.",
-					'notice error is-dismissible'
 				);
 			}
 		}

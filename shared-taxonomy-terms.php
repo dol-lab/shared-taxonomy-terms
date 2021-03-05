@@ -1,20 +1,20 @@
 <?php
 /**
  * Plugin Name: Shared Taxonomy Terms
- * Version: 1.0.0
- * Plugin URI: http://www.hughlashbrooke.com/
+ * Version: 0.0.6
+ * Plugin URI: https://github.com/dol-lab/shared-taxonomy-terms
  * Description: This is your starter template for your next WordPress plugin.
- * Author: Hugh Lashbrooke
- * Author URI: http://www.hughlashbrooke.com/
- * Requires at least: 4.0
- * Tested up to: 4.0
+ * Author: Vitus Schuhwerk
+ * Author URI: https://github.com/schuhwerk
+ * Requires at least: 5.6.1
+ * Tested up to: 5.6.1
  *
  * Text Domain: shared-terms
  * Domain Path: /lang/
  *
  * @package WordPress
- * @author Hugh Lashbrooke
- * @since 1.0.0
+ * @author Vitus Schuhwerk
+ * @since 0.0.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,12 +42,10 @@ shared_taxonomy_terms(); // initialize the plugin.
 /**
  * Returns the main instance of Shared_Taxonomy_Terms to prevent the need to use globals.
  *
- * @since  1.0.0
  * @return object Shared_Taxonomy_Terms
  */
 function shared_taxonomy_terms() {
-
-	demo_shared_taxonomies();
+	// demo_shared_taxonomies();
 	$instance = Shared_Taxonomy_Terms_Plugin::instance( __FILE__, '1.0.0' );
 	return $instance;
 
