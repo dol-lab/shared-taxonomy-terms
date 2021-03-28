@@ -415,11 +415,11 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 	}
 
-	public function get_shared_term( \WP_Term $term_in_group, string $taxonomy_slugs ) {
-		if ( $term_in_group->taxonomy == $taxonomy_slugs ) {
+	public function get_shared_term( \WP_Term $term_in_group, string $taxonomy_slug ) {
+		if ( $term_in_group->taxonomy == $taxonomy_slug ) {
 			throw new Exception( 'You already found what you were searching for...' );
 		}
-		$terms = $this->get_shared_terms( $term_in_group, (array) $taxonomy_slugs );
+		$terms = $this->get_shared_terms( $term_in_group, (array) $taxonomy_slug );
 		return ( isset( $terms[0] ) ) ? $terms[0] : false;
 	}
 
@@ -437,7 +437,8 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	 */
 
 	/**
-	 *
+	 * Get all shared terms of the given term.
+	 * 
 	 * @param WP_Term $term_in_group
 	 * @param array   $taxonomy_slugs
 	 * @return WP_Term[]

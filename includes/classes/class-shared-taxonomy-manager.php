@@ -4,7 +4,7 @@ namespace Shared_Taxonomies;
 
 /**
  * Manages all shared Taxonomy objects.
- * There don't create a new instance, just use the one publicly available (via the plugin).
+ * Don't create a new instance, just use the one publicly available (via the plugin).
  *
  * @todo This could also contain admin-setting interfaces?
  * @todo Check for the same thing init twice?
@@ -14,7 +14,7 @@ namespace Shared_Taxonomies;
 class Shared_Taxonomy_Manager {
 
 	/**
-	 * Contains all intialized shared taxonomies.
+	 * Contains all initialized shared taxonomies.
 	 *
 	 * @var Shared_Taxonomy_Relation[]
 	 */
