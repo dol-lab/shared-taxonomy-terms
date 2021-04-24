@@ -494,10 +494,10 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		 */
 		global $wpdb;
 
-		$args['taxonomies'] = isset( $args['taxonomies'] ) ? (array) $args['taxonomies'] : false;
+		$args['taxonomies'] = isset( $args['taxonomies'] ) ? (array) $args['taxonomies'] : array();
 
 		$limit_taxonomy = '';
-		if ( $args['taxonomies'] ) {
+		if ( ! empty( $args['taxonomies'] ) ) {
 			$tax_ids        = implode( "', '", array_map( 'esc_sql', $args['taxonomies'] ) );
 			$limit_taxonomy = "AND trm_tax.taxonomy IN ('$tax_ids')";
 		}
