@@ -124,7 +124,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	public function sync_all_shared_terms( $admin_notice = true ) {
 		$terms = get_terms(
 			array(
-				'taxonomy' => $this->sources,
+				'taxonomy'   => $this->sources,
 				'hide_empty' => false,
 			)
 		);
@@ -143,7 +143,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			}
 			$skip_term_ids[] = $term->term_id;
 			$synced_term_ids = $this->hook_saved_updated_term( $term->term_id, $term->term_taxonomy_id, $term->taxonomy, true, $admin_notice );
-			$skip_term_ids = array_merge( $skip_term_ids, $synced_term_ids );
+			$skip_term_ids   = array_merge( $skip_term_ids, $synced_term_ids );
 		}
 	}
 
@@ -191,7 +191,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	public function hook_saved_updated_term( int $term_id, int $tt_id, string $taxonomy, bool $update, $admin_notice = true ) {
 
 		remove_action( 'saved_term', array( $this, 'hook_saved_updated_term' ) ); // remove this action, avoid loops.
-		$source_term = get_term( $term_id, $taxonomy );
+		$source_term   = get_term( $term_id, $taxonomy );
 		$action_string = $update ? 'updated' : 'created';
 		$this->debug( "Term was $action_string (term_id[$term_id], taxonomy_id[$tt_id], taxonomy slug[$taxonomy])" );
 
@@ -201,7 +201,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		 *
 		 * We also do this for newly created terms. There might already be another term in another taxonomy...
 		 */
-		$shared_terms = $this->get_shared_terms( $source_term, array_unique( array_merge( $this->sources, $this->destinations ) ) );
+		$shared_terms  = $this->get_shared_terms( array( $source_term ), array_unique( array_merge( $this->sources, $this->destinations ) ) );
 		$term_group_id = max( wp_list_pluck( $shared_terms, 'term_group' ) ); // find the biggest term_group in shared terms.
 
 		if ( 0 == $term_group_id // there is no term-group yet.
@@ -279,7 +279,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		}
 
 		$dest_term = $this->get_shared_term( $source_term, $dest_taxo_slug );
-		$action = '';
+		$action    = '';
 		try {
 			if ( ! $dest_term ) { // term does not yet exist, create!
 				$term_id = $this->insert_get_shared_term( $source_term, $dest_taxo_slug, $dest_parent_id );
@@ -302,14 +302,14 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		if ( ! $admin_notice ) {
 			return;
 		}
-		$term = get_term( $term_id, $dest_taxo_slug );
-		$term_link = get_edit_term_link( $term->term_id, $dest_taxo_slug );
+		$term        = get_term( $term_id, $dest_taxo_slug );
+		$term_link   = get_edit_term_link( $term->term_id, $dest_taxo_slug );
 		$linked_term = "<a href='$term_link'>$term->name</a>";
-		$msgs = array(
+		$msgs        = array(
 			'created' => esc_html__( 'The term %1$s has successfully been added to taxonomy %2$s.', 'shared-term' ),
 			'updated' => esc_html__( 'The term %1$s has successfully been updated in taxonomy %2$s.', 'shared-term' ),
 		);
-		$notice = sprintf(
+		$notice      = sprintf(
 			$msgs[ $action ],
 			$linked_term,
 			$this->ui->get_taxonomy_label( $dest_taxo_slug )
@@ -340,10 +340,10 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			$source_term->name,
 			$dest_taxo_slug,
 			array(
-				'term_group' => $source_term->term_group, // doesn't work, see update_term below
+				'term_group'  => $source_term->term_group, // doesn't work, see update_term below
 				'description' => $source_term->description,
 				'parent'      => $dest_parent_id,
-				'slug'     => $source_term->slug,
+				'slug'        => $source_term->slug,
 			)
 		);
 
@@ -375,11 +375,11 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			$dest_term->term_id,
 			$dest_term->taxonomy,
 			array(
-				'term_group' => $source_term->term_group, // doesn't work, see update_term below
+				'term_group'  => $source_term->term_group, // doesn't work, see update_term below
 				'description' => $source_term->description,
 				'parent'      => $dest_parent_id,
-				'slug'     => $source_term->slug,
-				'name' => $source_term->name,
+				'slug'        => $source_term->slug,
+				'name'        => $source_term->name,
 				// 'taxonomy' => $dest_term->taxonomy, // don't overwrite taxonomy!
 			)
 		);
@@ -419,7 +419,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		if ( $term_in_group->taxonomy == $taxonomy_slug ) {
 			throw new Exception( 'You already found what you were searching for...' );
 		}
-		$terms = $this->get_shared_terms( $term_in_group, (array) $taxonomy_slug );
+		$terms = $this->get_shared_terms( array( $term_in_group ), (array) $taxonomy_slug );
 		return ( isset( $terms[0] ) ) ? $terms[0] : false;
 	}
 
@@ -438,25 +438,34 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 	/**
 	 * Get all shared terms of the given term.
-	 * 
-	 * @param WP_Term $term_in_group
-	 * @param array   $taxonomy_slugs
+	 *
+	 * @param WP_Term[] $terms_in_group
+	 * @param string[]  $taxonomy_slugs
 	 * @return WP_Term[]
 	 * @throws Exception
 	 */
-	public function get_shared_terms( \WP_Term $term_in_group, array $taxonomy_slugs ) {
+	public function get_shared_terms( array $terms_in_group, array $taxonomy_slugs ) {
 		$terms = array();
-		// The term has a term-group assigned. Search by groups.
-		if ( 0 != $term_in_group->term_group ) {
-			$terms = $this->get_terms_by_group_id( $term_in_group->term_group, array( 'taxonomies' => $taxonomy_slugs ) );
+
+		if ( empty( $terms_in_group ) || empty( $taxonomy_slugs ) || ! is_a( $terms_in_group[0], '\WP_Term' ) ) {
+			return new WP_Error( 'broke', 'Make sure the parameters are not empty and you pass WP_Term - Objects to get_shared_terms. ' );
+		}
+
+		$term_groups = array_filter( wp_list_pluck( $terms_in_group, 'term_group' ) );
+
+		/**
+		 * We check if all $terms_in_group have non-zero term-groups.
+		 */
+		if ( count( $term_groups ) == count( $terms_in_group ) ) {
+			$terms = $this->get_terms_by_group_ids( $term_groups, array( 'taxonomies' => $taxonomy_slugs ) );
 		}
 
 		// search by groups didn't yield any results. search by slugs.
 		if ( ! isset( $terms[0] ) || ! $terms[0] instanceof \WP_Term ) {
 			$terms = get_terms(
 				array(
-					'slug' => $term_in_group->slug,
-					'taxonomy' => $taxonomy_slugs,
+					'slug'       => wp_list_pluck( $terms_in_group, 'slug' ),
+					'taxonomy'   => $taxonomy_slugs,
 					'hide_empty' => false,
 				)
 			);
@@ -470,18 +479,16 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	}
 
 	/**
-	 *
-	 *
 	 * This is sad. We can't use get_terms, get_term_by or WP_Term_Query. They don't respect term_group (WP 5.5.3).
 	 *
-	 * @todo This could be a PR for WP...
+	 * @todo This could be a PR for WP? term_group(s) also might get abandoned...
 	 *
-	 * @param int   $group_id
+	 * @param int[] $group_id
 	 * @param array $args
 	 * @return \WP_Term[]
 	 * @throws Exception If there are multiple terms in a term_group for the same taxonomy.
 	 */
-	public function get_terms_by_group_id( int $group_id, $args = array() ) {
+	public function get_terms_by_group_ids( array $group_ids, $args = array() ) {
 		/**
 		 * @var \wpdb $wpdb
 		 */
@@ -491,20 +498,28 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$limit_taxonomy = '';
 		if ( $args['taxonomies'] ) {
-			$tax_ids = implode( "', '", array_map( 'esc_sql', $args['taxonomies'] ) );
+			$tax_ids        = implode( "', '", array_map( 'esc_sql', $args['taxonomies'] ) );
 			$limit_taxonomy = "AND trm_tax.taxonomy IN ('$tax_ids')";
 		}
+
+		// create placeholders for every group_id.
+		$placeholders = implode( ', ', array_fill( 0, count( $group_ids ), '%d' ) );
 
 		$query = $wpdb->prepare(
 			"SELECT * FROM $wpdb->terms as trm
 				INNER JOIN $wpdb->term_taxonomy as trm_tax
 				ON trm.term_id = trm_tax.term_id
-			WHERE trm.term_group = %d",
-			array( $group_id )
+			WHERE trm.term_group in ($placeholders)",
+			$group_ids
 		);
+
 		$results = $wpdb->get_results( $query . ' ' . $limit_taxonomy );
-		$result_count = count( $results );
-		if ( count( $args['taxonomies'] ) == 1 && $result_count > 1 ) {
+		
+		$result_count = empty( $results ) ? 0 : count( $results );
+		if ( $result_count > 1
+			&& count( $args['taxonomies'] ) == 1
+			&& count( $group_ids ) == 1
+		) {
 			throw new Exception(
 				'Warning: There are multiple terms with the same term group in the same taxonomy. ' .
 				"This is not expected by the 'shared-taxonomy-terms' plugin."
@@ -514,7 +529,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$terms = array();
 		foreach ( $results as $result ) {
-			$term = sanitize_term( $result, $result->taxonomy, 'raw' );
+			$term    = sanitize_term( $result, $result->taxonomy, 'raw' );
 			$terms[] = new \WP_Term( $term ); // This doesn't require a switch to blog. */
 		}
 		return $terms;
@@ -545,7 +560,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$remaining_taxos = $this->get_destinations_excluding( $source_taxonomy ); // we already added one, we just want to handle to other ones.
 		foreach ( $remaining_taxos as $dest_taxo_slug ) {
-			$dest_term = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
+			$dest_term    = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
 			$dest_tax_url = $this->ui->get_taxonomy_label( $dest_taxo_slug );
 			$dest_deleted_term = $dest_term ? wp_delete_term( $dest_term->term_id, $dest_taxo_slug ) : 'false';
 			if ( false == $dest_deleted_term || ! $dest_term ) {
@@ -558,7 +573,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 						$source_term_id
 					)
 				);
-			} else if ( true == $dest_deleted_term ) {
+			} elseif ( true == $dest_deleted_term ) {
 				$this->ui->admin_notice->add_success(
 					sprintf(
 						/** Translator: */
