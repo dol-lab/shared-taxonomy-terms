@@ -41,7 +41,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	 *
 	 * @var array
 	 */
-	public $all_taxonomy_slugs = array();
+	private $all_taxonomy_slugs = array();
 
 
 	/**
