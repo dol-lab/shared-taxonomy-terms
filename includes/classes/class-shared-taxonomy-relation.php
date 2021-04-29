@@ -201,7 +201,8 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		 *
 		 * We also do this for newly created terms. There might already be another term in another taxonomy...
 		 */
-		$shared_terms  = $this->get_shared_terms( array( $source_term ), array_unique( array_merge( $this->sources, $this->destinations ) ) );
+		$shared_terms = $this->get_shared_terms( array( $source_term ), array_unique( array_merge( $this->sources, $this->destinations ) ) );
+		
 		$term_group_id = max( wp_list_pluck( $shared_terms, 'term_group' ) ); // find the biggest term_group in shared terms.
 
 		if ( 0 == $term_group_id // there is no term-group yet.
@@ -451,20 +452,25 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			return new WP_Error( 'broke', 'Make sure the parameters are not empty and you pass WP_Term - Objects to get_shared_terms. ' );
 		}
 
-		$term_groups = array_filter( wp_list_pluck( $terms_in_group, 'term_group' ) );
+		$term_groups = array_unique( array_filter( wp_list_pluck( $terms_in_group, 'term_group' ) ) );
 
 		/**
 		 * We check if all $terms_in_group have non-zero term-groups.
 		 */
 		if ( count( $term_groups ) == count( $terms_in_group ) ) {
 			$terms = $this->get_terms_by_group_ids( $term_groups, array( 'taxonomies' => $taxonomy_slugs ) );
+
 		}
 
+		$all_found = count( $terms ) === count( $terms_in_group );
+
 		// search by groups didn't yield any results. search by slugs.
-		if ( ! isset( $terms[0] ) || ! $terms[0] instanceof \WP_Term ) {
+		if ( ! isset( $terms[0] ) || ! $terms[0] instanceof \WP_Term || ! $all_found ) {
+			error_log( 'Shared-terms: Something is wrong with your term_groups. Fall back to matching by slugs.' );
+			$slugs = wp_list_pluck( $terms_in_group, 'slug' );
 			$terms = get_terms(
 				array(
-					'slug'       => wp_list_pluck( $terms_in_group, 'slug' ),
+					'slug'       => $slugs,
 					'taxonomy'   => $taxonomy_slugs,
 					'hide_empty' => false,
 				)
@@ -560,8 +566,8 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$remaining_taxos = $this->get_destinations_excluding( $source_taxonomy ); // we already added one, we just want to handle to other ones.
 		foreach ( $remaining_taxos as $dest_taxo_slug ) {
-			$dest_term    = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
-			$dest_tax_url = $this->ui->get_taxonomy_label( $dest_taxo_slug );
+			$dest_term         = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
+			$dest_tax_url      = $this->ui->get_taxonomy_label( $dest_taxo_slug );
 			$dest_deleted_term = $dest_term ? wp_delete_term( $dest_term->term_id, $dest_taxo_slug ) : 'false';
 			if ( false == $dest_deleted_term || ! $dest_term ) {
 				$this->ui->admin_notice->add_info(
@@ -674,7 +680,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			$issue_actions = array();
 			foreach ( $this->actions as $action ) {
 				if ( ! current_user_can( $action, $destination ) ) {
-					$meta = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
+					$meta            = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
 					$issue_actions[] = "$action ($meta)";
 				}
 			}
