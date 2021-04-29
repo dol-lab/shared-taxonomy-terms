@@ -1,0 +1,334 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Shared Taxonomy Terms\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-28 23:41+0000\n"
+"PO-Revision-Date: 2021-04-28 23:52+0000\n"
+"Last-Translator: admin spaces\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.2; wp-5.7.1\n"
+"X-Domain: shared-terms"
+
+#. %s contains a bullet-list of actions.
+#: includes/classes/class-shared-taxonomies-ui.php:58
+#, php-format
+msgid "Following actions are applying (to the taxonomies mentioned above): %s"
+msgstr ""
+
+#. %1$s is the current taxonomy, %1$s is a bullet-point list of other taxonomies.
+#: includes/classes/class-shared-taxonomies-ui.php:79
+#, php-format
+msgid ""
+"The current taxonomy (%1$s) synchronizes it's changes to the following "
+"taxonomies: %2$s"
+msgstr ""
+
+#. %1$s is the current taxonomy, %1$s is a bullet-point list of other taxonomies.
+#: includes/classes/class-shared-taxonomies-ui.php:104
+#, php-format
+msgid ""
+"Changes in the following taxonomies are applied to this taxonomy (%1$s): %2$s"
+msgstr ""
+
+#: includes/classes/class-shared-taxonomies-ui.php:126
+msgid ""
+"There are issues with your Shared Taxonomy.\n"
+"\t\t\t\t\tYour configured sychronization might fail as you dont have "
+"necessary capabilities."
+msgstr ""
+
+#. Translator:
+#: includes/classes/class-shared-taxonomy-relation.php:570
+#, php-format
+msgid ""
+"Deleting shared term: No shared term \"%1$s\" was found in taxonomy %2$s for "
+"term[%3$s]."
+msgstr ""
+
+#. Translator:
+#: includes/classes/class-shared-taxonomy-relation.php:580
+#, php-format
+msgid "Successfully deleted shared term '%1$s' for taxonomy '%2$s'"
+msgstr ""
+
+#. Translator:
+#: includes/classes/class-shared-taxonomy-relation.php:589
+#, php-format
+msgid "Error deleting shared term: '%s'."
+msgstr ""
+
+#. Translator:
+#: includes/classes/class-shared-taxonomy-relation.php:597
+#, php-format
+msgid ""
+"Can't delete shared term for taxonomy %s as it is set as the default taxonomy"
+msgstr ""
+
+#: includes/classes/class-shared-taxonomy-relation.php:683
+#, php-format
+msgid "You are missing one or more capabilities in the taxonomy \"%1$s\": %2$s"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:131
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:132
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:404
+msgid "Plugin Settings"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:180
+msgid "Settings"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:193
+msgid "Standard"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:194
+msgid "These are fairly standard form input fields."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:198
+msgid "Some Text"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:199
+msgid "This is a standard text field."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:202
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:210
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:218
+msgid "Placeholder text"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:206
+msgid "A Password"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:207
+msgid "This is a standard password field."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:214
+msgid "Some Secret Text"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:215
+msgid ""
+"This is a secret text field - any data saved here will not be displayed "
+"after the page has reloaded, but it will be saved."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:222
+msgid "A Text Block"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:223
+msgid "This is a standard text area."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:226
+msgid "Placeholder text for this textarea"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:230
+msgid "An Option"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:231
+msgid ""
+"A standard checkbox - if you save this option as checked then it will store "
+"the option as 'on', otherwise it will be an empty string."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:237
+msgid "A Select Box"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:238
+msgid "A standard select box."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:249
+msgid "Some Options"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:250
+msgid "A standard set of radio buttons."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:261
+msgid "Some Items"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:262
+msgid "You can select multiple items and they will be stored as an array."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:276
+msgid "Extra"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:277
+msgid ""
+"These are some extra input fields that maybe aren't as common as the others."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:281
+msgid "A Number"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:282
+msgid ""
+"This is a standard number field - if this field contains anything other than "
+"numbers then the form will not be submitted."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:285
+msgid "42"
+msgstr "42"
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:289
+msgid "Pick a colour"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:290
+msgid ""
+"This uses WordPress' built-in colour picker - the option is stored as the "
+"colour's hex code."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:296
+msgid "An Image"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:297
+msgid ""
+"This will upload an image to your media library and store the attachment ID "
+"in the option field. Once you have uploaded an imge the thumbnail will "
+"display above these buttons."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:304
+msgid "A Multi-Select Box"
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:305
+msgid "A standard multi-select box - the saved data is stored as an array."
+msgstr ""
+
+#: includes/plugin-classes/class-shared-taxonomy-terms-settings.php:458
+msgid "Save Settings"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-admin-api.php:169
+msgid "Upload an image"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-admin-api.php:169
+msgid "Use image"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-admin-api.php:169
+msgid "Upload new image"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-admin-api.php:170
+msgid "Remove image"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:102
+#, php-format
+msgid "All %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:103
+#, php-format
+msgid "Edit %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:104
+#, php-format
+msgid "View %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:105
+#, php-format
+msgid "Update %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:106
+#, php-format
+msgid "Add New %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:107
+#, php-format
+msgid "New %s Name"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:108
+#, php-format
+msgid "Parent %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:109
+#, php-format
+msgid "Parent %s:"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:110
+#, php-format
+msgid "Search %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:111
+#, php-format
+msgid "Popular %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:112
+#, php-format
+msgid "Separate %s with commas"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:113
+#, php-format
+msgid "Add or remove %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:114
+#, php-format
+msgid "Choose from the most used %s"
+msgstr ""
+
+#: includes/plugin-classes/lib/class-shared-taxonomy-terms-taxonomy.php:115
+#, php-format
+msgid "No %s found"
+msgstr ""
+
+#. Name of the plugin
+msgid "Shared Taxonomy Terms"
+msgstr ""
+
+#. Description of the plugin
+msgid "This is your starter template for your next WordPress plugin."
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/dol-lab/shared-taxonomy-terms"
+msgstr ""
+
+#. Author of the plugin
+msgid "Vitus Schuhwerk"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://github.com/schuhwerk"
+msgstr ""
