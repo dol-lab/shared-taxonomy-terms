@@ -101,7 +101,6 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		add_action( 'delete_term', array( $this, 'hook_delete_term' ), 10, 5 ); // this should be handeled automatically.
 		add_filter( 'map_meta_cap', array( $this, 'filter_map_meta_cap' ), 10, 4 );
 
-
 		// @todo: add actions for term-relations!
 
 		// add_action( 'admin_enqueue_scripts', array( FF$this, 'enqueue_scripts' ), 10 );
@@ -202,13 +201,13 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		/**
 		 * Determine the term_group.
-		 * It can either be inheriterd from an exiting term in the group or newly created.
+		 * It can either be inherited from an exiting term in the group or newly created.
 		 *
 		 * We also do this for newly created terms. There might already be another term in another taxonomy...
 		 */
 		$shared_terms = $this->get_shared_terms( array( $source_term ), array_unique( array_merge( $this->sources, $this->destinations ) ) );
-		
-		$term_group_id = max( array_merge( array(0), wp_list_pluck( $shared_terms, 'term_group' ) ) ); // find the biggest term_group in shared terms.
+
+		$term_group_id = max( array_merge( array( 0 ), wp_list_pluck( $shared_terms, 'term_group' ) ) ); // find the biggest term_group in shared terms.
 
 		if ( 0 == $term_group_id // there is no term-group yet.
 			|| $term_group_id != $source_term->term_group ) { // the source term does not have the proper term-group.
@@ -512,8 +511,6 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		// create placeholders for every group_id.
 		$placeholders = implode( ', ', array_fill( 0, count( $group_ids ), '%d' ) );
 
-
-
 		$query  = $wpdb->prepare(
 			"SELECT * FROM $wpdb->terms as trm
 				INNER JOIN $wpdb->term_taxonomy as trm_tax
@@ -532,7 +529,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		}
 
 		// $results = $wpdb->get_results( $query );
-		
+
 		$result_count = empty( $results ) ? 0 : count( $results );
 		if ( $result_count > 1
 			&& count( $args['taxonomies'] ) == 1
@@ -543,7 +540,6 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 				"This is not expected by the 'shared-taxonomy-terms' plugin."
 			);
 		}
-
 
 		$terms = array();
 		foreach ( $results as $result ) {
@@ -578,8 +574,8 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$remaining_taxos = $this->get_destinations_excluding( $source_taxonomy ); // we already added one, we just want to handle to other ones.
 		foreach ( $remaining_taxos as $dest_taxo_slug ) {
-			$dest_term    = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
-			$dest_tax_url = $this->ui->get_taxonomy_label( $dest_taxo_slug );
+			$dest_term         = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
+			$dest_tax_url      = $this->ui->get_taxonomy_label( $dest_taxo_slug );
 			$dest_deleted_term = $dest_term ? wp_delete_term( $dest_term->term_id, $dest_taxo_slug ) : 'false';
 			if ( false == $dest_deleted_term || ! $dest_term ) {
 				$this->ui->admin_notice->add_info(
@@ -692,7 +688,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			$issue_actions = array();
 			foreach ( $this->actions as $action ) {
 				if ( ! current_user_can( $action, $destination ) ) {
-					$meta = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
+					$meta            = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
 					$issue_actions[] = "$action ($meta)";
 				}
 			}
