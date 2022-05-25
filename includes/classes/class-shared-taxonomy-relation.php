@@ -190,6 +190,11 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	 */
 	public function hook_saved_updated_term( int $term_id, int $tt_id, string $taxonomy, bool $update, $admin_notice = true ) {
 
+		if ( ! in_array( $taxonomy, $this->sources ) ) {
+			$this->debug( $taxonomy . ' is not a source in shared taxonomy..' );
+			return; // nothing to do here.
+		}
+
 		remove_action( 'saved_term', array( $this, 'hook_saved_updated_term' ) ); // remove this action, avoid loops.
 		$source_term   = get_term( $term_id, $taxonomy );
 		$action_string = $update ? 'updated' : 'created';
@@ -203,17 +208,12 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		 */
 		$shared_terms = $this->get_shared_terms( array( $source_term ), array_unique( array_merge( $this->sources, $this->destinations ) ) );
 		
-		$term_group_id = max( wp_list_pluck( $shared_terms, 'term_group' ) ); // find the biggest term_group in shared terms.
+		$term_group_id = max( array_merge( array(0), wp_list_pluck( $shared_terms, 'term_group' ) ) ); // find the biggest term_group in shared terms.
 
 		if ( 0 == $term_group_id // there is no term-group yet.
 			|| $term_group_id != $source_term->term_group ) { // the source term does not have the proper term-group.
 			$this->assign_term_group( $source_term, $term_group_id ); // make sure the term has a term_group.
 			$source_term = get_term( $term_id, $taxonomy );
-		}
-
-		if ( ! in_array( $taxonomy, $this->sources ) ) {
-			$this->debug( $taxonomy . ' is not a source in shared taxonomy..' );
-			return; // nothing to do here.
 		}
 
 		$remaining_taxos = $this->get_destinations_excluding( $taxonomy ); // we already added one, we just want to handle to other ones.
@@ -488,6 +488,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	 * This is sad. We can't use get_terms, get_term_by or WP_Term_Query. They don't respect term_group (WP 5.5.3).
 	 *
 	 * @todo This could be a PR for WP? term_group(s) also might get abandoned...
+	 * @todo $args currently only supports 'taxonomies'.
 	 *
 	 * @param int[] $group_id
 	 * @param array $args
@@ -511,15 +512,26 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		// create placeholders for every group_id.
 		$placeholders = implode( ', ', array_fill( 0, count( $group_ids ), '%d' ) );
 
-		$query = $wpdb->prepare(
+
+
+		$query  = $wpdb->prepare(
 			"SELECT * FROM $wpdb->terms as trm
 				INNER JOIN $wpdb->term_taxonomy as trm_tax
 				ON trm.term_id = trm_tax.term_id
 			WHERE trm.term_group in ($placeholders)",
 			$group_ids
 		);
+		$query .= ' ' . $limit_taxonomy;
 
-		$results = $wpdb->get_results( $query . ' ' . $limit_taxonomy );
+		$cache_key = md5( $query );
+		if ( ! wp_cache_get( $cache_key, 'terms' ) ) {
+			$results = $wpdb->get_results( $query );
+			wp_cache_set( $cache_key, $results, 'terms' );
+		} else {
+			$results = wp_cache_get( $cache_key, 'terms' );
+		}
+
+		// $results = $wpdb->get_results( $query );
 		
 		$result_count = empty( $results ) ? 0 : count( $results );
 		if ( $result_count > 1
@@ -566,8 +578,8 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$remaining_taxos = $this->get_destinations_excluding( $source_taxonomy ); // we already added one, we just want to handle to other ones.
 		foreach ( $remaining_taxos as $dest_taxo_slug ) {
-			$dest_term         = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
-			$dest_tax_url      = $this->ui->get_taxonomy_label( $dest_taxo_slug );
+			$dest_term    = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
+			$dest_tax_url = $this->ui->get_taxonomy_label( $dest_taxo_slug );
 			$dest_deleted_term = $dest_term ? wp_delete_term( $dest_term->term_id, $dest_taxo_slug ) : 'false';
 			if ( false == $dest_deleted_term || ! $dest_term ) {
 				$this->ui->admin_notice->add_info(
@@ -680,7 +692,7 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			$issue_actions = array();
 			foreach ( $this->actions as $action ) {
 				if ( ! current_user_can( $action, $destination ) ) {
-					$meta            = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
+					$meta = implode( ', ', map_meta_cap( $action, get_current_user_id(), $destination ) );
 					$issue_actions[] = "$action ($meta)";
 				}
 			}
