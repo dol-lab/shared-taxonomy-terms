@@ -147,7 +147,7 @@ class Shared_Taxonomies_Ui {
 
 		$parent = '#wpbody-content';
 		$headline = $parent . ' h1'; // this is unspecific, as it applies to headline in term.php & edit-tags.php
-		$name = esc_html( 'Shared Taxonomy', 'shared-terms' );
+		$name = esc_html__( 'Shared Taxonomy', 'shared-terms' );
 		echo "
 			<style>
 				$headline { cursor: pointer; }
@@ -194,7 +194,7 @@ class Shared_Taxonomies_Ui {
 		/*
 		 if ( ! current_user_can( 'manage_terms', $taxonomy_slug ) ) {
 			error_log( "You are not allowed to mange_terms for $taxonomy_slug" );
-			$markup = esc_html( '(Not allowed for you)', 'shared_terms' ) . $markup;
+			$markup = esc_html__( '(Not allowed for you)', 'shared_terms' ) . $markup;
 		} */
 
 		if ( $tax->show_ui ) {
