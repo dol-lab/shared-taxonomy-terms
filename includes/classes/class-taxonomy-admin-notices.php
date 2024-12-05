@@ -6,13 +6,12 @@ namespace Shared_Taxonomies;
  * Add admin Notices to category-page. ('action=add-tag').
  *
  * To allow notices for ajax-actions we listen to WordPress ajax-call.
- *
  */
 class Taxonomy_Admin_Notices {
 
 	/**
 	 * The name of the current instance.
-	 * Used for naming the tranient.
+	 * Used for naming the transient.
 	 *
 	 * @var string
 	 */
@@ -33,7 +32,7 @@ class Taxonomy_Admin_Notices {
 	public $base_classes = '';
 
 	public function __construct( string $notice_name, string $base_classes = 'notice tax-ajax-admin-notice' ) {
-		$this->notice_name;
+		$this->notice_name  = $notice_name;
 		$this->base_classes = $base_classes;
 		$this->add_hooks();
 	}
@@ -95,7 +94,7 @@ class Taxonomy_Admin_Notices {
 		$this->add(
 			array(
 				'message' => $message,
-				'class' => 'notice-error',
+				'class'   => 'notice-error',
 			)
 		);
 	}
@@ -110,7 +109,7 @@ class Taxonomy_Admin_Notices {
 		$this->add(
 			array(
 				'message' => $message,
-				'class' => 'notice-warning',
+				'class'   => 'notice-warning',
 			)
 		);
 	}
@@ -125,7 +124,7 @@ class Taxonomy_Admin_Notices {
 		$this->add(
 			array(
 				'message' => $message,
-				'class' => 'notice-info',
+				'class'   => 'notice-info',
 			)
 		);
 	}
@@ -137,10 +136,12 @@ class Taxonomy_Admin_Notices {
 	 * @return void
 	 */
 	public function add_success( string $message ) {
+		error_log( '' . __FILE__ . ' on line ' . __LINE__ . "\n" . print_r( compact( 'message' ), true ) );
+
 		$this->add(
 			array(
 				'message' => $message,
-				'class' => 'notice-success is-dismissible',
+				'class'   => 'notice-success is-dismissible',
 			)
 		);
 	}
@@ -158,7 +159,7 @@ class Taxonomy_Admin_Notices {
 			array(
 				'message' => '',
 				'details' => '',
-				'class' => 'error is-dismissible tax-ajax-admin-notice',
+				'class'   => 'error is-dismissible tax-ajax-admin-notice',
 			)
 		);
 
@@ -173,14 +174,14 @@ class Taxonomy_Admin_Notices {
 			array(
 				'message' => '',
 				'details' => '',
-				'class' => 'error is-dismissible',
+				'class'   => 'error is-dismissible',
 			)
 		);
 		array_push( $this->notice_store, $notice );
 	}
 
 	private function get_admin_notices() : array {
-		$transient_notices = array_filter( (array) get_transient( $this->notice_name ) );
+		$transient_notices  = array_filter( (array) get_transient( $this->notice_name ) );
 		$this->notice_store = array_merge( $this->notice_store, $transient_notices );
 		if ( ! empty( $transient_notices ) ) {
 			delete_transient( $this->notice_name );
@@ -191,7 +192,7 @@ class Taxonomy_Admin_Notices {
 
 	public function render_admin_notices() : string {
 		$notices = $this->get_admin_notices();
-		$markup = '';
+		$markup  = '';
 		foreach ( $notices as $notice ) {
 			$class = esc_attr( $notice['class'] . ' ' . $this->base_classes );
 			if ( empty( $notice['details'] ) ) {
