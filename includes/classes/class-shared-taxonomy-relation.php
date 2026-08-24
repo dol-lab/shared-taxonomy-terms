@@ -237,6 +237,29 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 		// @todo how do we want to fail?
 	}
 
+
+	/**
+	 * Whether the current user may change terms in one of the shared taxonomies.
+	 *
+	 * A copy is a write in the destination, so it needs the destination's own capability:
+	 * the source taxonomy is often far less protected than the destination. Contexts
+	 * without a user (WP-CLI, cron, activation) are no privilege boundary and pass.
+	 *
+	 * @param string $taxonomy_slug The taxonomy which is written to.
+	 * @param string $cap_name      A key of the taxonomy's cap object: edit_terms, delete_terms, ...
+	 * @return bool
+	 */
+	public function current_user_can_in_taxonomy( string $taxonomy_slug, string $cap_name = 'edit_terms' ) : bool {
+		if ( ! get_current_user_id() ) {
+			return true;
+		}
+		$taxonomy = get_taxonomy( $taxonomy_slug );
+		if ( ! $taxonomy || ! isset( $taxonomy->cap->$cap_name ) ) {
+			return false;
+		}
+		return current_user_can( $taxonomy->cap->$cap_name );
+	}
+
 	/**
 	 * Synchronizes a shared term to another taxonomy.
 	 * If a shared parent is not found in destination it is created (recursively).
@@ -276,6 +299,16 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 			} else { // parent term does not exist in destination.
 				$dest_parent_id = $this->sync_taxonomy_action_create_update( $source_parent_term, $dest_taxo_slug, $admin_notice );
 			}
+		}
+
+		if ( ! $this->current_user_can_in_taxonomy( $dest_taxo_slug, 'edit_terms' ) ) {
+			throw new Exception(
+				sprintf(
+					/* translators: %s: taxonomy slug */
+					esc_html__( 'You are not allowed to change terms in the taxonomy "%s", so it was not synced.', 'shared-terms' ),
+					$dest_taxo_slug
+				)
+			);
 		}
 
 		$dest_term = $this->get_shared_term( $source_term, $dest_taxo_slug );
@@ -565,6 +598,10 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 	 */
 	public function hook_delete_term( int $source_term_id, int $tt_id, string $source_taxonomy, $source_deleted_term, $object_ids ) {
 
+		if ( ! in_array( $source_taxonomy, $this->sources ) ) {
+			return; // A term of an unrelated taxonomy: never cascade into the shared ones.
+		}
+
 		remove_action( 'delete_term', array( $this, 'hook_delete_term' ) ); // remove the action, so it does not trigger itself.
 
 		if ( ! $source_deleted_term instanceof WP_Term ) {
@@ -574,8 +611,20 @@ class Shared_Taxonomy_Relation extends Objects_Relation {
 
 		$remaining_taxos = $this->get_destinations_excluding( $source_taxonomy ); // we already added one, we just want to handle to other ones.
 		foreach ( $remaining_taxos as $dest_taxo_slug ) {
+			$dest_tax_url = $this->ui->get_taxonomy_label( $dest_taxo_slug );
+
+			if ( ! $this->current_user_can_in_taxonomy( $dest_taxo_slug, 'delete_terms' ) ) {
+				$this->ui->admin_notice->add_warning(
+					sprintf(
+						/* translators: %s: taxonomy label */
+						esc_html__( 'You are not allowed to delete terms in the taxonomy %s, so its shared term was kept.', 'shared-terms' ),
+						$dest_tax_url
+					)
+				);
+				continue;
+			}
+
 			$dest_term         = $this->get_shared_term( $source_deleted_term, $dest_taxo_slug );
-			$dest_tax_url      = $this->ui->get_taxonomy_label( $dest_taxo_slug );
 			$dest_deleted_term = $dest_term ? wp_delete_term( $dest_term->term_id, $dest_taxo_slug ) : 'false';
 			if ( false == $dest_deleted_term || ! $dest_term ) {
 				$this->ui->admin_notice->add_info(

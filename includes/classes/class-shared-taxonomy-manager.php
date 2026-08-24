@@ -70,8 +70,34 @@ class Shared_Taxonomy_Manager {
 		return $issues;
 	}
 
+	/**
+	 * Whether the current user may write terms in every shared taxonomy.
+	 *
+	 * A full sync writes into all of them, so anything less would let a user change
+	 * terms in a taxonomy they may not edit.
+	 *
+	 * @return bool
+	 */
+	public function current_user_can_sync_all() {
+		foreach ( $this->get_all_taxonomy_slugs() as $taxo_slug ) {
+			$taxonomy = get_taxonomy( $taxo_slug );
+			if ( ! $taxonomy || ! current_user_can( $taxonomy->cap->edit_terms ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public function admin_post() {
-		if ( wp_verify_nonce( $_POST[ $this->action_name_sync_all . '_nonce' ], $this->action_name_sync_all ) ) {
+		if ( ! $this->current_user_can_sync_all() ) {
+			wp_die( esc_html__( 'You are not allowed to sync all shared taxonomies.', 'shared_terms' ), '', array( 'response' => 403 ) );
+		}
+
+		$nonce = isset( $_POST[ $this->action_name_sync_all . '_nonce' ] )
+			? sanitize_text_field( wp_unslash( $_POST[ $this->action_name_sync_all . '_nonce' ] ) )
+			: '';
+
+		if ( wp_verify_nonce( $nonce, $this->action_name_sync_all ) ) {
 			if ( isset( $_POST[ $this->action_name_sync_all ] ) ) {
 				$this->sync_all_shared_taxonomies( true );
 			}
@@ -94,6 +120,9 @@ class Shared_Taxonomy_Manager {
 	 * @return void
 	 */
 	public function sync_shared_taxonomies_button( $taxonomy ) {
+		if ( ! $this->current_user_can_sync_all() ) {
+			return;
+		}
 		$button_text = esc_html__( 'Sync Shared Taxonomies', '' );
 		$nonce = wp_nonce_field( $this->action_name_sync_all, $this->action_name_sync_all . '_nonce', false, false );
 		$url = admin_url( 'admin-post.php' );
